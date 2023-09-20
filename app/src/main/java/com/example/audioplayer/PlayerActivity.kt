@@ -40,10 +40,18 @@ class PlayerActivity : AppCompatActivity() {
 
         binding.next.setOnClickListener {
             sendIntent(PlayerService.Action.NEXT)
+            if (!isPlaying) {
+                isPlaying = true
+                setPauseButton()
+            }
         }
 
         binding.previous.setOnClickListener {
             sendIntent(PlayerService.Action.PREVIOUS)
+            if (!isPlaying) {
+                isPlaying = true
+                setPauseButton()
+            }
         }
     }
 
@@ -61,6 +69,14 @@ class PlayerActivity : AppCompatActivity() {
                 if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
             )
         )
+    }
 
+    private fun setPauseButton() {
+        binding.playPause.setImageDrawable(
+            AppCompatResources.getDrawable(
+                this,
+                R.drawable.ic_pause
+            )
+        )
     }
 }

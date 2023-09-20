@@ -17,12 +17,17 @@ class PlayerService() : Service() {
     )
     private var currentlyPlaying = 0
 
+    override fun onBind(intent: Intent): IBinder? {
+        return null
+    }
+
     override fun onCreate() {
         super.onCreate()
         buildNotification()
         mediaPlayer = MediaPlayer().also {
             it.setOnCompletionListener { nextTrack() }
         }
+        preparePlayer()
     }
 
     private fun buildNotification() {
@@ -43,13 +48,12 @@ class PlayerService() : Service() {
     }
 
     private fun play() {
-        preparePlayer()
         mediaPlayer.start()
     }
 
     private fun preparePlayer() {
         val afd = assets.openFd(resourcesIds[currentlyPlaying])
-        mediaPlayer.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+        mediaPlayer.setDataSource(afd)
         afd.close()
         mediaPlayer.prepare()
     }
@@ -62,6 +66,7 @@ class PlayerService() : Service() {
         resetPlayer()
         if (currentlyPlaying == resourcesIds.size - 1) currentlyPlaying = 0
         else currentlyPlaying++
+        preparePlayer()
         play()
     }
 
@@ -69,6 +74,7 @@ class PlayerService() : Service() {
         resetPlayer()
         if (currentlyPlaying - 1 < 0) currentlyPlaying = resourcesIds.size - 1
         else currentlyPlaying--
+        preparePlayer()
         play()
     }
 
@@ -77,10 +83,6 @@ class PlayerService() : Service() {
             stop()
             reset()
         }
-    }
-
-    override fun onBind(intent: Intent): IBinder? {
-        return null
     }
 
     enum class Action {
