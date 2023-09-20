@@ -14,9 +14,9 @@
 .cxx
 local.properties
 /.idea/.name
-/.idea/.compiler.xml
-/.idea/.deploymentTargetDropDown.xml
-/.idea/.gradle.xml
-/.idea/.kotlinc.xml
-/.idea/.misc.xml
-/.idea/.vcs.xml
+/.idea/compiler.xml
+/.idea/deploymentTargetDropDown.xml
+/.idea/gradle.xml
+/.idea/kotlinc.xml
+/.idea/misc.xml
+/.idea/vcs.xml
