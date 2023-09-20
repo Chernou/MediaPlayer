@@ -10,7 +10,7 @@ class PlayerService() : Service() {
 
     private lateinit var mediaPlayer: MediaPlayer
     private val resourcesIds = arrayOf(
-        "dozhd.mpr",
+        "dozhd.mp3",
         "cho_takoe_osen.mp3",
         "eto_vse.mp3",
         "ne_strelyay.mp3"
@@ -48,7 +48,7 @@ class PlayerService() : Service() {
     }
 
     private fun preparePlayer() {
-        val afd = assets.openFd("dozhd.mp3")
+        val afd = assets.openFd(resourcesIds[currentlyPlaying])
         mediaPlayer.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
         afd.close()
         mediaPlayer.prepare()
