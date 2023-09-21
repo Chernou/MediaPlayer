@@ -57,9 +57,7 @@ class PlayerService() : Service() {
     }
 
     private fun play() {
-        if (notification == null) {
-            buildNotification()
-        }
+        if (notification == null) buildNotification()
         mediaPlayer.start()
         isPlaying = true
     }
