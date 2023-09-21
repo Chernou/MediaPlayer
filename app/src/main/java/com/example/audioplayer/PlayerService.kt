@@ -10,7 +10,7 @@ import androidx.core.app.NotificationCompat
 class PlayerService() : Service() {
 
     private lateinit var mediaPlayer: MediaPlayer
-    private lateinit var actionProvider: ActionProvider
+    private var actionProvider: ActionProvider? = null
     private var notification: Notification? = null
     private val resourcesIds = arrayOf(
         "dozhd.mp3",
@@ -67,9 +67,9 @@ class PlayerService() : Service() {
         notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(resources.getString(R.string.audio_player))
-            .addAction(actionProvider.getPreviousAction())
-            .addAction(actionProvider.getPlayAction())
-            .addAction(actionProvider.getNextAction())
+            .addAction(actionProvider!!.getPreviousAction())
+            .addAction(actionProvider!!.getPlayAction())
+            .addAction(actionProvider!!.getNextAction())
             .build()
         startForeground(NOTIFICATION_ID, notification)
     }
@@ -95,6 +95,11 @@ class PlayerService() : Service() {
             stop()
             reset()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        actionProvider = null
     }
 
     enum class Action {
