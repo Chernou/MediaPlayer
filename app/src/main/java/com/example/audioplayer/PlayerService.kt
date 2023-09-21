@@ -72,6 +72,7 @@ class PlayerService() : Service() {
             .addAction(actionProvider!!.getNextAction())
             .build()
         startForeground(NOTIFICATION_ID, notification)
+        actionProvider = null
     }
 
     private fun previousTrack() {
@@ -95,11 +96,6 @@ class PlayerService() : Service() {
             stop()
             reset()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        actionProvider = null
     }
 
     enum class Action {
