@@ -1,5 +1,6 @@
 package com.example.audioplayer
 
+import android.app.Notification
 import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
@@ -9,6 +10,8 @@ import androidx.core.app.NotificationCompat
 class PlayerService() : Service() {
 
     private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var actionProvider: ActionProvider
+    private var notification: Notification? = null
     private val resourcesIds = arrayOf(
         "dozhd.mp3",
         "cho_takoe_osen.mp3",
@@ -16,6 +19,7 @@ class PlayerService() : Service() {
         "ne_strelyay.mp3"
     )
     private var currentlyPlaying = 0
+    private var isPlaying = false
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -23,32 +27,10 @@ class PlayerService() : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        buildNotification()
         mediaPlayer = MediaPlayer().also {
             it.setOnCompletionListener { nextTrack() }
         }
         preparePlayer()
-    }
-
-    private fun buildNotification() {
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_pause)
-            .build()
-        startForeground(NOTIFICATION_ID, notification)
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when (intent?.action) {
-            Action.PLAY.toString() -> play()
-            Action.PAUSE.toString() -> pause()
-            Action.PREVIOUS.toString() -> previousTrack()
-            Action.NEXT.toString() -> nextTrack()
-        }
-        return super.onStartCommand(intent, flags, startId)
-    }
-
-    private fun play() {
-        mediaPlayer.start()
     }
 
     private fun preparePlayer() {
@@ -58,22 +40,54 @@ class PlayerService() : Service() {
         mediaPlayer.prepare()
     }
 
-    private fun pause() {
-        mediaPlayer.pause()
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            Action.PLAY_PAUSE.toString() -> {
+                if (isPlaying) pause() else play()
+            }
+            Action.PREVIOUS.toString() -> previousTrack()
+            Action.NEXT.toString() -> nextTrack()
+        }
+        return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun nextTrack() {
-        resetPlayer()
-        if (currentlyPlaying == resourcesIds.size - 1) currentlyPlaying = 0
-        else currentlyPlaying++
-        preparePlayer()
-        play()
+    private fun pause() {
+        mediaPlayer.pause()
+        isPlaying = false
+    }
+
+    private fun play() {
+        if (notification == null) {
+            buildNotification()
+        }
+        mediaPlayer.start()
+        isPlaying = true
+    }
+
+    private fun buildNotification() {
+        actionProvider = ActionProvider(this)
+        notification = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle(resources.getString(R.string.audio_player))
+            .addAction(actionProvider.getPreviousAction())
+            .addAction(actionProvider.getPlayAction())
+            .addAction(actionProvider.getNextAction())
+            .build()
+        startForeground(NOTIFICATION_ID, notification)
     }
 
     private fun previousTrack() {
         resetPlayer()
         if (currentlyPlaying - 1 < 0) currentlyPlaying = resourcesIds.size - 1
         else currentlyPlaying--
+        preparePlayer()
+        play()
+    }
+
+    private fun nextTrack() {
+        resetPlayer()
+        if (currentlyPlaying == resourcesIds.size - 1) currentlyPlaying = 0
+        else currentlyPlaying++
         preparePlayer()
         play()
     }
@@ -86,7 +100,7 @@ class PlayerService() : Service() {
     }
 
     enum class Action {
-        PLAY, PAUSE, PREVIOUS, NEXT
+        PLAY_PAUSE, PREVIOUS, NEXT
     }
 
     companion object {

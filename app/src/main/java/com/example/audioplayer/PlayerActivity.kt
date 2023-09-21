@@ -27,14 +27,11 @@ class PlayerActivity : AppCompatActivity() {
             )
         }
 
+        startService(Intent(this, PlayerService::class.java))
+
         binding.playPause.setOnClickListener {
-            isPlaying = if (isPlaying) {
-                sendIntent(PlayerService.Action.PAUSE)
-                false
-            } else {
-                sendIntent(PlayerService.Action.PLAY)
-                true
-            }
+            sendIntent(PlayerService.Action.PLAY_PAUSE)
+            isPlaying = !isPlaying
             renderPlayPauseButton()
         }
 
