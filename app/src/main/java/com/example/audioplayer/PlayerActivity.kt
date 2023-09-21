@@ -28,12 +28,12 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         binding.playPause.setOnClickListener {
-            if (isPlaying) {
+            isPlaying = if (isPlaying) {
                 sendIntent(PlayerService.Action.PAUSE)
-                isPlaying = false
+                false
             } else {
                 sendIntent(PlayerService.Action.PLAY)
-                isPlaying = true
+                true
             }
             renderPlayPauseButton()
         }
