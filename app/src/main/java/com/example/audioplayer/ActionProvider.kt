@@ -27,12 +27,12 @@ class ActionProvider(private val context: Context) {
             it.action = PlayerService.Action.PLAY_PAUSE.toString()
             context.startService(it)
         }
-        val previousPendingIntent: PendingIntent =
+        val playPendingIntent: PendingIntent =
             PendingIntent.getService(context, 0, playIntent, PendingIntent.FLAG_IMMUTABLE)
 
         return NotificationCompat.Action.Builder(
             R.drawable.ic_play,
-            context.getString(R.string.play_pause), previousPendingIntent
+            context.getString(R.string.play_pause), playPendingIntent
         )
             .build()
     }
