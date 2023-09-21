@@ -12,7 +12,7 @@ class PlayerService() : Service() {
     private lateinit var mediaPlayer: MediaPlayer
     private var actionProvider: ActionProvider? = null
     private var notification: Notification? = null
-    private val resourcesIds = arrayOf(
+    private val assetsIds = arrayOf(
         "dozhd.mp3",
         "cho_takoe_osen.mp3",
         "eto_vse.mp3",
@@ -34,7 +34,7 @@ class PlayerService() : Service() {
     }
 
     private fun preparePlayer() {
-        val afd = assets.openFd(resourcesIds[currentlyPlaying])
+        val afd = assets.openFd(assetsIds[currentlyPlaying])
         mediaPlayer.setDataSource(afd)
         afd.close()
         mediaPlayer.prepare()
@@ -77,7 +77,7 @@ class PlayerService() : Service() {
 
     private fun previousTrack() {
         resetPlayer()
-        if (currentlyPlaying - 1 < 0) currentlyPlaying = resourcesIds.size - 1
+        if (currentlyPlaying - 1 < 0) currentlyPlaying = assetsIds.size - 1
         else currentlyPlaying--
         preparePlayer()
         play()
@@ -85,7 +85,7 @@ class PlayerService() : Service() {
 
     private fun nextTrack() {
         resetPlayer()
-        if (currentlyPlaying == resourcesIds.size - 1) currentlyPlaying = 0
+        if (currentlyPlaying == assetsIds.size - 1) currentlyPlaying = 0
         else currentlyPlaying++
         preparePlayer()
         play()
