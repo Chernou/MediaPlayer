@@ -38,16 +38,16 @@ class ActionProvider(private val context: Context) {
     }
 
     fun getNextAction(): NotificationCompat.Action {
-        val pauseIntent = Intent(context, PlayerService::class.java).also {
+        val nextIntent = Intent(context, PlayerService::class.java).also {
             it.action = PlayerService.Action.NEXT.toString()
             context.startService(it)
         }
-        val pausePendingIntent: PendingIntent =
-            PendingIntent.getService(context, 0, pauseIntent, PendingIntent.FLAG_IMMUTABLE)
+        val nextPendingIntent: PendingIntent =
+            PendingIntent.getService(context, 0, nextIntent, PendingIntent.FLAG_IMMUTABLE)
 
         return NotificationCompat.Action.Builder(
             R.drawable.ic_next,
-            context.getString(R.string.next), pausePendingIntent
+            context.getString(R.string.next), nextPendingIntent
         )
             .build()
     }
