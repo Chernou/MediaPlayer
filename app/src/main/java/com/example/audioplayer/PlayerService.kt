@@ -19,7 +19,6 @@ class PlayerService() : Service() {
         "ne_strelyay.mp3"
     )
     private var currentlyPlaying = 0
-    private var isPlaying = false
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -43,7 +42,7 @@ class PlayerService() : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             Action.PLAY_PAUSE.toString() -> {
-                if (isPlaying) pause() else play()
+                if (mediaPlayer.isPlaying) pause() else play()
             }
             Action.PREVIOUS.toString() -> previousTrack()
             Action.NEXT.toString() -> nextTrack()
@@ -53,13 +52,11 @@ class PlayerService() : Service() {
 
     private fun pause() {
         mediaPlayer.pause()
-        isPlaying = false
     }
 
     private fun play() {
         if (notification == null) buildNotification()
         mediaPlayer.start()
-        isPlaying = true
     }
 
     private fun buildNotification() {
